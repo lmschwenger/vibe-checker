@@ -5,7 +5,8 @@ from bs4 import BeautifulSoup
 
 class Analyzer:
     def __init__(self):
-        self.nlp = stanza.Pipeline(lang='en', processors='tokenize,sentiment', tokenize_no_ssplit=True)
+        self.nlp = stanza.Pipeline(lang='en', processors='tokenize,sentiment',
+                                   download_method=None, tokenize_no_ssplit=True)
 
     def analyze_website(self, url):
         soup = self.fetch_website_content(url)
@@ -27,11 +28,6 @@ class Analyzer:
         id_to_color = {0: 'negative', 1: 'neutral', 2: 'positive'}
         sentences = [(sentence.text, id_to_color[sentence.sentiment]) for sentence in doc.sentences]
 
-        # Debug: Print the identified sentiments
-        print("Sentiments Identified:")
-        for sentence, color in sentences:
-            print(f"Sentence: {sentence}\nSentiment: {color}")
-
         return sentences
 
     def highlight_sentiments(self, soup, sentences):
@@ -44,9 +40,4 @@ class Analyzer:
                     new_html = new_html.replace(sentence, highlighted_sentence, 1)
             para.clear()
             para.append(BeautifulSoup(new_html, 'html.parser'))
-
-        # Debug: Print the highlighted soup content
-        print("Highlighted Soup Content:")
-        print(soup.prettify())
-
         return soup
